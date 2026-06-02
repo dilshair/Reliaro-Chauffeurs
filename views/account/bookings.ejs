@@ -1,0 +1,37 @@
+<% pageTitle = 'My Bookings'; extraCss = '/css/dashboard.css'; %>
+<%- include('../partials/head') %>
+<%- include('../partials/nav') %>
+<main class="dash-main">
+  <div class="container">
+    <div class="dash-header">
+      <h1>My Bookings</h1>
+      <a href="/booking" class="btn btn-gold">+ New Booking</a>
+    </div>
+    <% if (bookings.length === 0) { %>
+    <div class="empty-state"><p>You have no bookings yet. <a href="/#prices">Get a price quote</a> to book your first ride.</p></div>
+    <% } else { %>
+    <div class="bookings-table-wrap">
+      <table class="bookings-table">
+        <thead><tr><th>Reference</th><th>Route</th><th>Date</th><th>Vehicle</th><th>Price</th><th>Payment</th><th>Status</th><th></th></tr></thead>
+        <tbody>
+          <% bookings.forEach(b => { %>
+          <tr>
+            <td><strong><%= b.reference %></strong></td>
+            <td class="route-cell"><%= b.pickup %> → <%= b.dropoff %></td>
+            <td><%= b.date || '—' %> <%= b.time || '' %></td>
+            <td><%= b.vehicle_class %></td>
+            <td>$<%= Number(b.total_price).toFixed(2) %></td>
+            <td><span class="status-badge status-<%= b.payment_status %>"><%= b.payment_status %></span></td>
+            <td><span class="status-badge status-<%= b.status %>"><%= b.status %></span></td>
+            <td><a href="/account/booking/<%= b.reference %>">View</a></td>
+          </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+    <% } %>
+  </div>
+</main>
+<%- include('../partials/footer') %>
+<script src="/js/main.js"></script>
+</body></html>

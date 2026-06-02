@@ -1,0 +1,53 @@
+<% pageTitle = 'My Account'; extraCss = '/css/dashboard.css'; %>
+<%- include('../partials/head') %>
+<%- include('../partials/nav') %>
+<main class="dash-main">
+  <div class="container">
+    <div class="dash-header">
+      <h1>Welcome, <%= user.name.split(' ')[0] %></h1>
+      <a href="/booking" class="btn btn-gold">+ New Booking</a>
+    </div>
+
+    <!-- Stats -->
+    <div class="dash-stats">
+      <div class="dash-stat"><strong><%= stats.total_bookings %></strong><p>Total Bookings</p></div>
+      <div class="dash-stat"><strong><%= stats.completed %></strong><p>Completed</p></div>
+      <div class="dash-stat"><strong>$<%= Number(stats.spent || 0).toFixed(0) %></strong><p>Total Spent</p></div>
+    </div>
+
+    <!-- Recent bookings -->
+    <div class="dash-section">
+      <div class="dash-section-header">
+        <h2>Recent Bookings</h2>
+        <a href="/account/bookings">View all →</a>
+      </div>
+      <% if (bookings.length === 0) { %>
+      <div class="empty-state">
+        <p>No bookings yet. <a href="/#prices">Get your first price quote</a></p>
+      </div>
+      <% } else { %>
+      <div class="bookings-table-wrap">
+        <table class="bookings-table">
+          <thead><tr><th>Reference</th><th>Route</th><th>Date</th><th>Vehicle</th><th>Price</th><th>Status</th><th></th></tr></thead>
+          <tbody>
+            <% bookings.forEach(b => { %>
+            <tr>
+              <td><strong><%= b.reference %></strong></td>
+              <td class="route-cell"><%= b.pickup %> → <%= b.dropoff %></td>
+              <td><%= b.date || '—' %></td>
+              <td><%= b.vehicle_class %></td>
+              <td>$<%= Number(b.total_price).toFixed(2) %></td>
+              <td><span class="status-badge status-<%= b.status %>"><%= b.status %></span></td>
+              <td><a href="/account/booking/<%= b.reference %>">View</a></td>
+            </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+      <% } %>
+    </div>
+  </div>
+</main>
+<%- include('../partials/footer') %>
+<script src="/js/main.js"></script>
+</body></html>

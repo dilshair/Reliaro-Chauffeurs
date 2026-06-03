@@ -21,7 +21,7 @@ router.post('/calculate', async (req, res) => {
     return res.status(400).json({ ok: false, message: 'Origin and destination are required.' });
   }
 
-  const apiKey = process.env.GOOGLE_MAPS_API_KEY;
+  const apiKey = process.env.GOOGLE_MAPS_SERVER_KEY || process.env.GOOGLE_MAPS_API_KEY;
   if (!apiKey) {
     return res.status(500).json({ ok: false, message: 'Maps API not configured.' });
   }

@@ -1,0 +1,89 @@
+<% pageTitle = 'Contact Us'; %>
+<%- include('../partials/head') %>
+<%- include('../partials/nav') %>
+
+<div class="page-hero">
+  <div class="container-narrow">
+    <p class="eyebrow">Get in touch</p>
+    <h1>We're here to help.</h1>
+    <p>Have a question or need a custom quote? Our team is available 24/7.</p>
+  </div>
+</div>
+
+<section class="section section-white">
+  <div class="container">
+    <div class="contact-grid">
+      <div>
+        <p class="eyebrow">Contact information</p>
+        <h2 style="margin-bottom:2rem">Let's talk.</h2>
+
+        <div class="contact-detail">
+          <div class="contact-detail-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-3.09-3.09A19.79 19.79 0 014.93 9.67 2 2 0 016.93 7.5h3a2 2 0 012 1.72c.13.96.36 1.9.7 2.81a2 2 0 01-.45 2.11L11.09 15.2a16 16 0 006.29 6.29l1.06-1.06a2 2 0 012.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0122 22.92v-6z"/></svg>
+          </div>
+          <div>
+            <h4>Phone</h4>
+            <p><a href="tel:<%= brand.phone %>" style="color:var(--gold)"><%= brand.phoneDisplay %></a></p>
+            <p style="font-size:.82rem;color:var(--text-dmuted);margin-top:.2rem">Available 24 hours, 7 days</p>
+          </div>
+        </div>
+
+        <div class="contact-detail">
+          <div class="contact-detail-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          </div>
+          <div>
+            <h4>Email</h4>
+            <p><a href="mailto:<%= brand.email %>" style="color:var(--gold)"><%= brand.email %></a></p>
+            <p style="font-size:.82rem;color:var(--text-dmuted);margin-top:.2rem">We reply within 60 minutes</p>
+          </div>
+        </div>
+
+        <div class="contact-detail">
+          <div class="contact-detail-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          </div>
+          <div>
+            <h4>Location</h4>
+            <p><%= brand.address %></p>
+            <p style="font-size:.82rem;color:var(--text-dmuted);margin-top:.2rem">Serving Melbourne & Victoria</p>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <% if (typeof success !== 'undefined' && success) { %>
+        <div class="alert alert-success">✓ Message sent! We'll be in touch within 60 minutes.</div>
+        <% } %>
+
+        <form action="/contact/send" method="POST" class="form-card">
+          <div class="form-title">Send us a message</div>
+          <div class="form-row">
+            <div class="form-group"><label for="firstName">First Name *</label><input type="text" id="firstName" name="firstName" required></div>
+            <div class="form-group"><label for="lastName">Last Name *</label><input type="text" id="lastName" name="lastName" required></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label for="email">Email *</label><input type="email" id="email" name="email" required></div>
+            <div class="form-group"><label for="phone">Phone</label><input type="tel" id="phone" name="phone"></div>
+          </div>
+          <div class="form-group">
+            <label for="subject">Subject</label>
+            <select id="subject" name="subject">
+              <option value="General enquiry">General enquiry</option>
+              <option value="Booking enquiry">Booking enquiry</option>
+              <option value="Corporate account">Corporate account</option>
+              <option value="Feedback">Feedback</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <div class="form-group"><label for="message">Message *</label><textarea id="message" name="message" rows="5" required placeholder="How can we help you?"></textarea></div>
+          <button type="submit" class="btn btn-gold btn-full btn-lg" style="margin-top:.5rem">Send message</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<%- include('../partials/footer') %>
+<script src="/js/main.js"></script>
+</body></html>

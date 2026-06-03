@@ -129,6 +129,7 @@ em{font-style:italic;color:var(--gold)}
 .calc-btn:hover{background:var(--gold-h);transform:translateY(-2px);box-shadow:0 6px 20px rgba(201,168,76,.3)}
 .calc-btn:disabled{background:var(--dark-3);color:var(--text-muted);cursor:not-allowed;transform:none;box-shadow:none}
 .calc-error{font-size:.85rem;color:#f87171;background:rgba(248,113,113,.1);border:1px solid rgba(248,113,113,.3);border-radius:var(--r);padding:.65rem 1rem}
+[hidden]{display:none!important}
 .calc-loading{display:flex;align-items:center;justify-content:center;gap:.75rem;padding:1.25rem;font-size:.88rem;color:var(--text-muted)}
 .calc-loading svg{animation:spin 1s linear infinite;color:var(--gold)}
 @keyframes spin{to{transform:rotate(360deg)}}

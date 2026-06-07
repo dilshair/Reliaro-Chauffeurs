@@ -1,0 +1,144 @@
+<% pageTitle = 'For Business'; %>
+<%- include('../partials/head') %>
+<%- include('../partials/nav') %>
+
+<div class="page-hero">
+  <div class="container-narrow">
+    <p class="eyebrow">Corporate Travel</p>
+    <h1>Travel built for business.</h1>
+    <p>Centralised billing, dedicated account management and priority booking for corporations, travel agencies and strategic partners.</p>
+  </div>
+</div>
+
+<!-- Business types -->
+<section class="section section-dark">
+  <div class="container">
+    <div class="business-types">
+      <% businessTypes.forEach(b => { %>
+      <div class="biz-card" id="<%= b.id %>">
+        <div class="biz-icon">
+          <% if (b.icon === 'building') { %>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+          <% } else if (b.icon === 'globe') { %>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>
+          <% } else { %>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+          <% } %>
+        </div>
+        <h3><%= b.name %></h3>
+        <p><%= b.desc %></p>
+        <ul class="biz-features">
+          <% b.features.forEach(f => { %>
+          <li><%= f %></li>
+          <% }) %>
+        </ul>
+      </div>
+      <% }) %>
+    </div>
+  </div>
+</section>
+
+<!-- Benefits -->
+<section class="section section-white">
+  <div class="container">
+    <div class="section-header">
+      <p class="eyebrow">Why choose Reliaro for business</p>
+      <h2>Corporate travel, simplified.</h2>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:2rem">
+      <% [
+        {icon:'📋',title:'Centralised billing',desc:'One invoice for all your company trips. Monthly or weekly billing cycles available.'},
+        {icon:'📊',title:'Travel reporting',desc:'Detailed reports on travel spend, routes and usage to keep your finance team happy.'},
+        {icon:'⭐',title:'Priority booking',desc:'Corporate accounts get priority allocation, especially during peak periods.'},
+        {icon:'👤',title:'Dedicated manager',desc:'A dedicated account manager who knows your business and preferences.'},
+        {icon:'🔒',title:'Discreet service',desc:'All our chauffeurs are trained in discretion. Perfect for executive and client transfers.'},
+        {icon:'📱',title:'Easy booking',desc:'Book online, by phone or via email. Simple as it gets.'},
+      ].forEach(b => { %>
+      <div style="padding:2rem;background:var(--off-white);border:1px solid var(--light-border);border-radius:var(--r-xl)">
+        <div style="font-size:2rem;margin-bottom:1rem"><%= b.icon %></div>
+        <h4 style="margin-bottom:.6rem"><%= b.title %></h4>
+        <p style="font-size:.87rem;color:var(--text-dmuted);line-height:1.75"><%= b.desc %></p>
+      </div>
+      <% }) %>
+    </div>
+  </div>
+</section>
+
+<!-- Account opening form -->
+<section class="section section-light" id="apply">
+  <div class="container-narrow">
+    <div class="section-header">
+      <p class="eyebrow">Get started</p>
+      <h2>Open a business account.</h2>
+      <p class="lead">Fill in your details and our team will be in touch within one business day.</p>
+    </div>
+
+    <% if (typeof success !== 'undefined' && success) { %>
+    <div class="alert alert-success">✓ Thank you! We'll be in touch within one business day.</div>
+    <% } %>
+
+    <form action="/business/apply" method="POST" class="form-card">
+      <div class="form-title">Company Information</div>
+      <div class="form-row">
+        <div class="form-group"><label for="companyName">Company Name *</label><input type="text" id="companyName" name="companyName" required></div>
+        <div class="form-group"><label for="abn">ABN</label><input type="text" id="abn" name="abn" placeholder="XX XXX XXX XXX"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="accountType">Account Type *</label>
+          <select id="accountType" name="accountType" required>
+            <option value="" disabled selected>Select type…</option>
+            <option value="Corporation">Corporation</option>
+            <option value="Travel Agency">Travel Agency</option>
+            <option value="Strategic Partner">Strategic Partner</option>
+          </select>
+        </div>
+        <div class="form-group"><label for="industry">Industry</label><input type="text" id="industry" name="industry" placeholder="e.g. Finance, Legal, Hospitality"></div>
+      </div>
+
+      <div class="form-title" style="margin-top:1.5rem">Contact Details</div>
+      <div class="form-row">
+        <div class="form-group"><label for="contactFirst">First Name *</label><input type="text" id="contactFirst" name="contactFirst" required></div>
+        <div class="form-group"><label for="contactLast">Last Name *</label><input type="text" id="contactLast" name="contactLast" required></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label for="contactEmail">Email *</label><input type="email" id="contactEmail" name="contactEmail" required></div>
+        <div class="form-group"><label for="contactPhone">Phone *</label><input type="tel" id="contactPhone" name="contactPhone" required></div>
+      </div>
+      <div class="form-group"><label for="contactRole">Your Role</label><input type="text" id="contactRole" name="contactRole" placeholder="e.g. Office Manager, EA, CFO"></div>
+
+      <div class="form-title" style="margin-top:1.5rem">Travel Requirements</div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="monthlyTrips">Estimated monthly trips</label>
+          <select id="monthlyTrips" name="monthlyTrips">
+            <option value="1-5">1–5 trips</option>
+            <option value="6-20">6–20 trips</option>
+            <option value="21-50">21–50 trips</option>
+            <option value="50+">50+ trips</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="billingCycle">Preferred billing</label>
+          <select id="billingCycle" name="billingCycle">
+            <option value="Monthly">Monthly invoice</option>
+            <option value="Weekly">Weekly invoice</option>
+            <option value="Per trip">Per trip</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group"><label for="requirements">Additional requirements</label><textarea id="requirements" name="requirements" rows="3" placeholder="Tell us about your specific travel needs, preferred vehicles, regular routes…"></textarea></div>
+
+      <button type="submit" class="btn btn-gold btn-full btn-lg" style="margin-top:1rem">Submit Application</button>
+      <p class="form-privacy" style="margin-top:.75rem">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        Your details are private and only used to process your application.
+      </p>
+    </form>
+  </div>
+</section>
+
+<%- include('../partials/whatsapp') %>
+<%- include('../partials/footer') %>
+<script src="/js/main.js"></script>
+</body></html>

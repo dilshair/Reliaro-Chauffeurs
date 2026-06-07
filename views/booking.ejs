@@ -1,0 +1,327 @@
+<% pageTitle = 'Complete Your Booking'; %>
+<%- include('partials/head') %>
+<%- include('partials/nav') %>
+
+<main class="page-main" style="background:var(--off-white)">
+  <div class="container" style="max-width:720px">
+    <a href="/" class="back-link">← Back to home</a>
+    <div style="margin-bottom:2rem">
+      <h1 style="font-size:2rem;margin-bottom:.5rem">Complete your booking</h1>
+      <p style="color:var(--text-dmuted)">Fill in your details below. We'll confirm within 60 minutes.</p>
+    </div>
+
+    <% if (typeof error !== 'undefined' && error) { %>
+    <div class="alert alert-error"><%= error %></div>
+    <% } %>
+
+    <% if (prefill && prefill.vehicleClass) { %>
+    <div class="booking-summary">
+      <div class="booking-summary-row">
+        <div><p class="summary-label">Vehicle</p><p class="summary-val"><%= prefill.vehicleClass %></p></div>
+        <div><p class="summary-label">Route</p><p class="summary-val"><%= prefill.pickup %><%= prefill.dropoff ? ' → ' + prefill.dropoff : '' %></p></div>
+        <div><p class="summary-label">Fixed Price</p><p class="summary-price">$<%= Number(prefill.totalPrice || 0).toFixed(2) %></p></div>
+      </div>
+    </div>
+    <% } %>
+
+    <form action="/booking" method="POST" class="form-card" id="booking-form">
+      <input type="hidden" name="service"      value="<%= prefill.service || prefill.vehicleClass || '' %>">
+      <input type="hidden" name="vehicleClass" value="<%= prefill.vehicleClass || '' %>">
+      <input type="hidden" name="pickup"       value="<%= prefill.pickup || '' %>">
+      <input type="hidden" name="dropoff"      value="<%= prefill.dropoff || '' %>">
+      <input type="hidden" name="date"         value="<%= prefill.date || '' %>">
+      <input type="hidden" name="time"         value="<%= prefill.time || '' %>">
+      <input type="hidden" name="mode"         value="<%= prefill.mode || 'oneway' %>">
+      <input type="hidden" name="duration"     value="<%= prefill.duration || '' %>">
+      <input type="hidden" name="distanceKm"   value="<%= prefill.distanceKm || '' %>">
+      <input type="hidden" name="durationMins" value="<%= prefill.durationMins || '' %>">
+      <input type="hidden" name="basePrice"    value="<%= prefill.basePrice || '' %>">
+      <input type="hidden" name="tollCost"     value="<%= prefill.tollCost || '' %>">
+      <input type="hidden" name="surchargeAmt" value="<%= prefill.surchargeAmt || '' %>">
+      <input type="hidden" name="gst"          value="<%= prefill.gst || '' %>">
+      <input type="hidden" name="baseTotalPrice" id="baseTotalPrice" value="<%= prefill.totalPrice || '' %>">
+      <input type="hidden" name="totalPrice"   id="finalTotalPrice"  value="<%= prefill.totalPrice || '' %>">
+
+      <div class="form-title">Your Details</div>
+      <div class="form-row">
+        <div class="form-group"><label for="firstName">First Name *</label><input type="text" id="firstName" name="firstName" required value="<%= user ? user.name.split(' ')[0] : '' %>"></div>
+        <div class="form-group"><label for="lastName">Last Name *</label><input type="text" id="lastName" name="lastName" required value="<%= user ? user.name.split(' ').slice(1).join(' ') : '' %>"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label for="email">Email *</label><input type="email" id="email" name="email" required value="<%= user ? user.email : '' %>"><span class="field-error" id="email-error" hidden style="font-size:.78rem;color:#dc2626;margin-top:.25rem">Please enter a valid email address.</span></div>
+        <div class="form-group">
+          <label for="phone">Phone *</label>
+          <input type="tel" id="phone" name="phone" required placeholder="+61 4XX XXX XXX">
+          <span class="field-error" id="phone-error" hidden style="font-size:.78rem;color:#dc2626;margin-top:.25rem">Please enter a valid Australian phone number.</span>
+        </div>
+      </div>
+
+      <% if (!user) { %>
+      <div class="form-hint">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <a href="/auth/login">Sign in</a> to save this booking to your account.
+      </div>
+      <% } %>
+
+      <div class="form-title" style="margin-top:1.5rem">Journey Details</div>
+      <% if (!prefill.vehicleClass) { %>
+      <div class="form-group">
+        <label for="service">Service *</label>
+        <select id="service" name="service" required>
+          <option value="" disabled selected>Select a service…</option>
+          <% services.forEach(s => { %><option value="<%= s.name %>"><%= s.name %></option><% }) %>
+        </select>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label for="pickup-v">Pickup *</label><input type="text" id="pickup-v" name="pickup" required value="<%= prefill.pickup || '' %>"></div>
+        <div class="form-group"><label for="dropoff-v">Drop-off *</label><input type="text" id="dropoff-v" name="dropoff" required value="<%= prefill.dropoff || '' %>"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label for="date-v">Date</label><input type="date" id="date-v" name="date" value="<%= prefill.date || '' %>"></div>
+        <div class="form-group"><label for="time-v">Time</label><input type="time" id="time-v" name="time" value="<%= prefill.time || '09:00' %>"></div>
+      </div>
+      <% } else { %>
+      <div class="form-row">
+        <div class="form-group"><label>Pickup</label><input type="text" value="<%= prefill.pickup %>" readonly class="input-readonly"></div>
+        <div class="form-group"><label>Drop-off</label><input type="text" value="<%= prefill.dropoff || 'Hourly hire' %>" readonly class="input-readonly"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Date</label><input type="text" value="<%= prefill.date || 'Not set' %>" readonly class="input-readonly"></div>
+        <div class="form-group"><label>Time</label><input type="text" value="<%= prefill.time || 'Not set' %>" readonly class="input-readonly"></div>
+      </div>
+      <% } %>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="passengers">Passengers</label>
+          <select id="passengers" name="passengers">
+            <% for(let i=1;i<=15;i++){ %><option value="<%= i %>" <%= prefill.passengers == i ? 'selected' : '' %>><%= i %></option><% } %>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="luggage">Luggage</label>
+          <select id="luggage" name="luggage">
+            <option value="None">No luggage</option>
+            <option value="1 bag">1 bag</option><option value="2 bags">2 bags</option>
+            <option value="3 bags">3 bags</option><option value="4+ bags">4+ bags</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group" id="flight-group" style="display:none">
+        <label for="flightNumber">Flight Number <span style="text-transform:none;font-weight:400;color:var(--text-dmuted)">(for airport pickups)</span></label>
+        <input type="text" id="flightNumber" name="flightNumber" placeholder="e.g. QF401">
+      </div>
+
+      <div class="form-title" style="margin-top:1.5rem">Extras & Options</div>
+
+      <label class="addon-toggle">
+        <input type="checkbox" id="returnTrip" name="returnTrip" value="yes" onchange="recalcTotal()">
+        <div>
+          <strong>Add return trip</strong>
+          <span>Book the return journey now and save <%= Math.round(bookingRules.returnDiscount*100) %>%</span>
+        </div>
+        <span class="addon-fee" id="return-fee"></span>
+      </label>
+
+      <div class="addon-row">
+        <div><strong>Child seats</strong><span>$<%= bookingRules.childSeatFee %> per seat</span></div>
+        <select name="childSeats" id="childSeats" onchange="recalcTotal()" style="width:90px">
+          <option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option>
+        </select>
+      </div>
+
+      <div class="addon-row">
+        <div><strong>Additional stops</strong><span>$<%= bookingRules.extraStopFee %> per stop</span></div>
+        <select name="extraStops" id="extraStops" onchange="recalcTotal()" style="width:90px">
+          <option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option>
+        </select>
+      </div>
+
+      <div class="form-group" id="stops-group" style="display:none;margin-top:.75rem">
+        <label for="stopAddresses">Stop addresses</label>
+        <textarea id="stopAddresses" name="stopAddresses" rows="2" placeholder="Enter each additional stop address, one per line"></textarea>
+      </div>
+
+      <div class="form-group" style="margin-top:1rem">
+        <label for="promoCode">Promo Code</label>
+        <div style="display:flex;gap:.5rem">
+          <input type="text" id="promoCode" name="promoCode" placeholder="Enter code" style="text-transform:uppercase">
+          <button type="button" class="btn btn-outline-dark" onclick="applyPromo()" style="flex-shrink:0">Apply</button>
+        </div>
+        <span id="promo-msg" style="font-size:.8rem;margin-top:.35rem" hidden></span>
+        <input type="hidden" name="appliedPromo" id="appliedPromo">
+        <input type="hidden" name="promoDiscount" id="promoDiscount" value="0">
+      </div>
+
+      <div class="form-group" style="margin-top:.75rem">
+        <label for="notes">Additional Notes</label>
+        <textarea id="notes" name="notes" rows="3" placeholder="Special requests, accessibility needs, etc."></textarea>
+      </div>
+
+      <div class="form-title" style="margin-top:1.5rem">Payment</div>
+      <div class="payment-options">
+        <label class="payment-opt">
+          <input type="radio" name="paymentMethod" value="stripe" checked>
+          <div class="payment-opt-content">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <strong>Pay now — Secure card payment</strong>
+              <div class="card-icons"><span>VISA</span><span>MC</span><span>AMEX</span></div>
+            </div>
+            <p>Pay securely via Stripe. Instant confirmation.</p>
+          </div>
+        </label>
+        <label class="payment-opt">
+          <input type="radio" name="paymentMethod" value="invoice">
+          <div class="payment-opt-content">
+            <strong>Request invoice</strong>
+            <p>We'll confirm and send an invoice within 60 minutes.</p>
+          </div>
+        </label>
+      </div>
+
+      <% if (prefill.totalPrice) { %>
+      <div class="price-summary" id="price-summary">
+        <div class="price-summary-row"><span>Base fare</span><span>$<%= Number(prefill.basePrice || 0).toFixed(2) %></span></div>
+        <% if (Number(prefill.tollCost) > 0) { %><div class="price-summary-row"><span>Tolls (est.)</span><span>$<%= Number(prefill.tollCost).toFixed(2) %></span></div><% } %>
+        <% if (Number(prefill.surchargeAmt) > 0) { %><div class="price-summary-row"><span>Surcharge</span><span>$<%= Number(prefill.surchargeAmt).toFixed(2) %></span></div><% } %>
+        <div class="price-summary-row" id="row-addons" hidden><span>Extras</span><span id="addons-amt">$0.00</span></div>
+        <div class="price-summary-row" id="row-return" hidden><span>Return trip</span><span id="return-amt">$0.00</span></div>
+        <div class="price-summary-row" id="row-promo" hidden style="color:#059669"><span id="promo-label">Promo</span><span id="promo-amt">-$0.00</span></div>
+        <div class="price-summary-row"><span>GST (10%)</span><span>$<%= Number(prefill.gst || 0).toFixed(2) %></span></div>
+        <div class="price-summary-row price-summary-total"><span>Total (fixed)</span><span id="display-total">$<%= Number(prefill.totalPrice).toFixed(2) %></span></div>
+      </div>
+      <% } %>
+
+      <button type="submit" class="btn btn-gold btn-full btn-lg" id="book-btn">
+        Confirm booking<% if (prefill.totalPrice) { %> — <span id="btn-total">$<%= Number(prefill.totalPrice).toFixed(2) %></span><% } %>
+      </button>
+      <p class="form-privacy" style="margin-top:.75rem"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Your details are private and only used to process your booking.</p>
+    </form>
+  </div>
+</main>
+
+<%- include('partials/whatsapp') %>
+<%- include('partials/footer') %>
+<script src="/js/main.js"></script>
+<script>
+const BK = {
+  baseTotal:      Number('<%= prefill.totalPrice || 0 %>') || 0,
+  childSeatFee:   <%= bookingRules.childSeatFee %>,
+  extraStopFee:   <%= bookingRules.extraStopFee %>,
+  returnDiscount: <%= bookingRules.returnDiscount %>,
+  promos:         <%- JSON.stringify(promoCodes || []) %>,
+  minAdvanceHours:<%= bookingRules.minAdvanceHours %>,
+};
+
+(function(){
+  const service = '<%= (prefill.service || prefill.vehicleClass || "").toLowerCase().replace(/'/g, "") %>';
+  const pickup  = '<%= (prefill.pickup || "").toLowerCase().replace(/'/g, "") %>';
+  if (service.indexOf('airport')>=0 || pickup.indexOf('airport')>=0 || pickup.indexOf('tullamarine')>=0 || pickup.indexOf('avalon')>=0) {
+    const fg = document.getElementById('flight-group');
+    if (fg) fg.style.display = 'block';
+  }
+})();
+
+document.getElementById('extraStops') && document.getElementById('extraStops').addEventListener('change', function(){
+  document.getElementById('stops-group').style.display = parseInt(this.value) > 0 ? 'block' : 'none';
+});
+
+function recalcTotal() {
+  if (!BK.baseTotal) return;
+  let addons = 0;
+  const childSeats = parseInt((document.getElementById('childSeats')||{}).value || 0);
+  const extraStops = parseInt((document.getElementById('extraStops')||{}).value || 0);
+  addons += childSeats * BK.childSeatFee + extraStops * BK.extraStopFee;
+
+  let returnAmt = 0;
+  if ((document.getElementById('returnTrip')||{}).checked) returnAmt = BK.baseTotal * (1 - BK.returnDiscount);
+
+  const promoDiscount = parseFloat((document.getElementById('promoDiscount')||{}).value || 0);
+  let total = BK.baseTotal + addons + returnAmt - promoDiscount;
+  if (total < 0) total = 0;
+
+  const fmt = n => '$' + n.toFixed(2);
+  toggleRow('row-addons', addons > 0, 'addons-amt', fmt(addons));
+  toggleRow('row-return', returnAmt > 0, 'return-amt', fmt(returnAmt));
+  toggleRow('row-promo', promoDiscount > 0, 'promo-amt', '-' + fmt(promoDiscount));
+
+  const dt = document.getElementById('display-total'); if (dt) dt.textContent = fmt(total);
+  const bt = document.getElementById('btn-total');      if (bt) bt.textContent = fmt(total);
+  const ft = document.getElementById('finalTotalPrice'); if (ft) ft.value = total.toFixed(2);
+
+  const rf = document.getElementById('return-fee');
+  if (rf) rf.textContent = '+' + fmt(BK.baseTotal * (1 - BK.returnDiscount));
+}
+
+function toggleRow(rowId, show, amtId, val) {
+  const row = document.getElementById(rowId);
+  if (row) row.hidden = !show;
+  if (show && amtId) { const a = document.getElementById(amtId); if (a) a.textContent = val; }
+}
+
+function applyPromo() {
+  const input = document.getElementById('promoCode');
+  const msg   = document.getElementById('promo-msg');
+  const code  = ((input||{}).value || '').trim().toUpperCase();
+  if (!code) return;
+  const promo = BK.promos.find(p => p.code === code && p.active);
+  if (!promo) {
+    showPromoMsg(msg, 'Invalid or expired promo code.', false);
+    document.getElementById('promoDiscount').value = 0;
+    document.getElementById('appliedPromo').value = '';
+    recalcTotal(); return;
+  }
+  if (BK.baseTotal < promo.minSpend) {
+    showPromoMsg(msg, 'This code requires a minimum spend of $' + promo.minSpend + '.', false);
+    return;
+  }
+  const discount = promo.type === 'percent' ? BK.baseTotal * (promo.value/100) : promo.value;
+  document.getElementById('promoDiscount').value = discount.toFixed(2);
+  document.getElementById('appliedPromo').value = code;
+  document.getElementById('promo-label').textContent = 'Promo (' + code + ')';
+  showPromoMsg(msg, '✓ ' + promo.desc + ' applied!', true);
+  recalcTotal();
+}
+
+function showPromoMsg(el, text, ok) {
+  if (!el) return;
+  el.textContent = text;
+  el.style.color = ok ? '#059669' : '#dc2626';
+  el.hidden = false;
+}
+
+document.getElementById('booking-form') && document.getElementById('booking-form').addEventListener('submit', function(e){
+  /* Email validation */
+  const email    = document.getElementById('email');
+  const emailErr = document.getElementById('email-error');
+  const emailRe  = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+  if (email && !emailRe.test(email.value.trim())) {
+    e.preventDefault(); if (emailErr) emailErr.hidden = false; email.focus(); return;
+  }
+  if (emailErr) emailErr.hidden = true;
+
+  const phone = document.getElementById('phone');
+  const err   = document.getElementById('phone-error');
+  const re = /^(\+?61|0)[2-478]( ?\d){8}$/;
+  if (phone && !re.test(phone.value.replace(/\s/g,''))) {
+    e.preventDefault(); if (err) err.hidden = false; phone.focus(); return;
+  }
+  const dateEl = document.querySelector('[name=date]');
+  const timeEl = document.querySelector('[name=time]');
+  if (dateEl && dateEl.value && timeEl && timeEl.value) {
+    const booking = new Date(dateEl.value + 'T' + timeEl.value);
+    const minTime = new Date(Date.now() + BK.minAdvanceHours * 3600 * 1000);
+    if (booking < minTime) {
+      e.preventDefault();
+      alert('Bookings must be made at least ' + BK.minAdvanceHours + ' hours in advance. Please choose a later time.');
+      return;
+    }
+  }
+  const btn = document.getElementById('book-btn');
+  if (btn) { btn.disabled = true; btn.textContent = 'Processing…'; }
+});
+
+recalcTotal();
+</script>
+</body></html>

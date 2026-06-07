@@ -1,0 +1,292 @@
+<%- include('partials/head') %>
+<%- include('partials/nav') %>
+
+<!-- ══════════════════════════════
+     HERO — Full screen with photo
+══════════════════════════════ -->
+<section class="hero" id="home">
+  <div class="hero-bg" aria-hidden="true"></div>
+
+  <div class="hero-body">
+    <p class="eyebrow eyebrow-light">Melbourne & Victoria · 24/7</p>
+    <h1 class="hero-headline"><%= brand.tagline %></h1>
+    <p class="hero-sub">Fixed prices. Professional chauffeurs.<br>Airport transfers, corporate travel and more across Melbourne and Victoria.</p>
+
+    <!-- ── Calculator Widget ── -->
+    <div class="calc-widget" id="calculator">
+      <!-- Tabs -->
+      <div class="calc-tabs" role="tablist">
+        <button class="calc-tab active" id="tab-oneway" role="tab" aria-selected="true" aria-controls="panel-oneway" onclick="switchTab('oneway')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:.4rem" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          One way
+        </button>
+        <button class="calc-tab" id="tab-hourly" role="tab" aria-selected="false" aria-controls="panel-hourly" onclick="switchTab('hourly')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:.4rem" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          By the hour
+        </button>
+      </div>
+
+      <!-- One Way Panel -->
+      <div class="calc-panel active" id="panel-oneway" role="tabpanel">
+        <div class="calc-inputs calc-oneway-grid">
+          <div class="calc-input-group">
+            <label for="ow-pickup">Pickup location</label>
+            <input type="text" id="ow-pickup" class="calc-ac" placeholder="Address, airport, hotel…" autocomplete="off">
+          </div>
+          <div class="calc-input-group">
+            <label for="ow-dropoff">Drop-off location</label>
+            <input type="text" id="ow-dropoff" class="calc-ac" placeholder="Address, airport, hotel…" autocomplete="off">
+          </div>
+          <div class="calc-input-group">
+            <label for="ow-date">Date</label>
+            <input type="date" id="ow-date">
+          </div>
+          <div class="calc-input-group">
+            <label for="ow-time">Pickup time</label>
+            <input type="time" id="ow-time" value="09:00">
+          </div>
+          <div class="calc-submit-wrap">
+            <button class="calc-submit" id="ow-submit" onclick="runCalculate('oneway')">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              View options
+            </button>
+          </div>
+        </div>
+        <div class="calc-error" id="ow-error" hidden></div>
+      </div>
+
+      <!-- By the Hour Panel -->
+      <div class="calc-panel" id="panel-hourly" role="tabpanel">
+        <div class="calc-inputs calc-hourly-grid">
+          <div class="calc-input-group">
+            <label for="hr-pickup">Pickup location</label>
+            <input type="text" id="hr-pickup" class="calc-ac" placeholder="Address, airport, hotel…" autocomplete="off">
+          </div>
+          <div class="calc-input-group">
+            <label for="hr-duration">Duration</label>
+            <select id="hr-duration">
+              <option value="2">2 hours</option>
+              <option value="3">3 hours</option>
+              <option value="4">4 hours</option>
+              <option value="6">6 hours</option>
+              <option value="8">8 hours</option>
+            </select>
+          </div>
+          <div class="calc-input-group">
+            <label for="hr-date">Date</label>
+            <input type="date" id="hr-date">
+          </div>
+          <div class="calc-input-group">
+            <label for="hr-time">Pickup time</label>
+            <input type="time" id="hr-time" value="09:00">
+          </div>
+          <div class="calc-submit-wrap">
+            <button class="calc-submit" id="hr-submit" onclick="runCalculate('hourly')">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              View options
+            </button>
+          </div>
+        </div>
+        <div class="calc-error" id="hr-error" hidden></div>
+      </div>
+
+      <div class="calc-loading" id="calc-loading" hidden>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 12a9 9 0 11-6.219-8.56"/></svg>
+        Calculating your route…
+      </div>
+
+      <div class="calc-note">
+        <span>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          Fixed price
+        </span>
+        <span>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+          Includes GST
+        </span>
+        <span>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          Free cancellation
+        </span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Results (shown after calculate) ── -->
+<div class="results-section" id="results-section" hidden>
+  <div class="container">
+    <button class="results-back" onclick="hideResults()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+      Change details
+    </button>
+    <div class="results-meta" id="results-meta"></div>
+    <div class="vehicle-cards" id="vehicle-cards"></div>
+    <p class="results-disclaimer">All prices are fixed and include GST. Toll estimates based on the most likely route. Free cancellation up to 24 hours before pickup.</p>
+  </div>
+</div>
+
+<!-- ══════════════════════════════
+     SERVICES
+══════════════════════════════ -->
+<section class="section section-white" id="services-preview">
+  <div class="container">
+    <div class="section-header">
+      <p class="eyebrow">Our Services</p>
+      <h2>Every journey, perfectly handled.</h2>
+      <p class="lead">From airport transfers to full-day hire, we cover every travel need across Melbourne and Victoria.</p>
+    </div>
+    <div class="services-grid">
+      <% services.filter(s => s.showOnHome).forEach(s => { %>
+      <article class="service-card">
+        <div class="service-card-bg svc-<%= s.id %>" aria-hidden="true"></div>
+        <div class="service-card-overlay" aria-hidden="true"></div>
+        <div class="service-card-content">
+          <span class="service-card-label"><%= s.name %></span>
+          <h3 class="service-card-title"><%= s.shortDesc.split('.')[0] %>.</h3>
+          <p class="service-card-desc"><%= s.shortDesc %></p>
+          <a href="/services#<%= s.id %>" class="service-card-link">
+            Learn more
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+        </div>
+      </article>
+      <% }) %>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════
+     STATS
+══════════════════════════════ -->
+<div class="stats-strip" aria-label="Key statistics">
+  <div class="container-wide">
+    <div class="stats-grid">
+      <% stats.forEach(s => { %>
+      <div class="stat-block">
+        <strong><%= s.value %></strong>
+        <p><%= s.label %></p>
+      </div>
+      <% }) %>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════
+     EXPERIENCE
+══════════════════════════════ -->
+<section class="section section-dark" id="experience">
+  <div class="container">
+    <div class="section-header">
+      <p class="eyebrow">The Reliaro Experience</p>
+      <h2 style="color:var(--text)">Step in. Breathe out.</h2>
+      <p class="lead lead-light">Thoughtful details and discreet service transform every journey into your personal sanctuary.</p>
+    </div>
+    <div class="experience-grid">
+      <div class="exp-item">
+        <div class="exp-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+        </div>
+        <h3>A welcome like no other</h3>
+        <p>The door is opened for you. Your luggage is stowed. Your chauffeur greets you by name. Everything is taken care of.</p>
+      </div>
+      <div class="exp-item">
+        <div class="exp-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+        </div>
+        <h3>You set the pace</h3>
+        <p>Sit back and relax or stay productive. Music, temperature and conversation — all adjusted to your preferences.</p>
+      </div>
+      <div class="exp-item">
+        <div class="exp-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/><line x1="12" y1="12" x2="12" y2="16"/><line x1="10" y1="14" x2="14" y2="14"/></svg>
+        </div>
+        <h3>Stay connected</h3>
+        <p>Complimentary Wi-Fi and universal chargers for iOS and Android. Arrive ready, never drained.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════
+     REVIEWS
+══════════════════════════════ -->
+<section class="section section-light" id="reviews">
+  <div class="container">
+    <div class="section-header">
+      <p class="eyebrow">Client Reviews</p>
+      <h2>Trusted across Victoria.</h2>
+    </div>
+    <div class="reviews-track">
+      <% reviews.forEach(r => { %>
+      <article class="review-card">
+        <div class="review-stars" aria-label="<%= r.rating %> stars"><%= '★'.repeat(r.rating) %></div>
+        <blockquote><%= r.text %></blockquote>
+        <footer>
+          <div class="review-avatar" aria-hidden="true"><%= r.name.split(' ').map(n => n[0]).join('') %></div>
+          <div>
+            <cite class="review-name"><%= r.name %></cite>
+            <span class="review-service"><%= r.service %></span>
+          </div>
+        </footer>
+      </article>
+      <% }) %>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════
+     FAQ
+══════════════════════════════ -->
+<section class="section section-white" id="faq">
+  <div class="container-narrow">
+    <div class="section-header">
+      <p class="eyebrow">Questions</p>
+      <h2>Everything you need to know.</h2>
+    </div>
+    <div class="faq-list">
+      <% faqs.forEach((f, i) => { %>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(<%= i %>)" aria-expanded="false" id="faq-btn-<%= i %>">
+          <span><%= f.q %></span>
+          <svg class="faq-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="faq-a" id="faq-a-<%= i %>"><p><%= f.a %></p></div>
+      </div>
+      <% }) %>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════
+     CTA BAND
+══════════════════════════════ -->
+<section class="cta-band">
+  <div class="container">
+    <div class="cta-band-inner">
+      <div>
+        <h2>Ready to ride?</h2>
+        <p>Book online in minutes or call us anytime — day or night.</p>
+      </div>
+      <div class="cta-band-actions">
+        <a href="#calculator" class="btn btn-gold btn-lg" onclick="document.getElementById('calculator').scrollIntoView({behavior:'smooth'});return false">
+          Calculate my price
+        </a>
+        <a href="tel:<%= brand.phone %>" class="btn btn-outline btn-lg">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-3.09-3.09A19.79 19.79 0 014.93 9.67 2 2 0 016.93 7.5h3a2 2 0 012 1.72c.13.96.36 1.9.7 2.81a2 2 0 01-.45 2.11L11.09 15.2a16 16 0 006.29 6.29l1.06-1.06a2 2 0 012.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0122 22.92v-6z"/></svg>
+          <%= brand.phoneDisplay %>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<%- include('partials/whatsapp') %>
+<%- include('partials/footer') %>
+
+<script src="/js/main.js"></script>
+<script src="/js/calculator.js"></script>
+<% if (googleMapsKey) { %>
+<script src="https://maps.googleapis.com/maps/api/js?key=<%= googleMapsKey %>&libraries=places&callback=initMaps&loading=async" async defer></script>
+<% } %>
+</body></html>

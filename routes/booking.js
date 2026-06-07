@@ -28,6 +28,18 @@ router.post('/', async (req, res) => {
     return res.render('booking', { prefill: req.body, error: 'Please fill in all required fields.', promoCodes: require('../config/brand').promoCodes });
   }
 
+  /* Validate email format */
+  const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+  if (!emailRe.test(String(email).trim())) {
+    return res.render('booking', { prefill: req.body, error: 'Please enter a valid email address.', promoCodes: require('../config/brand').promoCodes });
+  }
+
+  /* Validate Australian phone */
+  const phoneRe = /^(\+?61|0)[2-478]( ?\d){8}$/;
+  if (!phoneRe.test(String(phone).replace(/\s/g, ''))) {
+    return res.render('booking', { prefill: req.body, error: 'Please enter a valid Australian phone number.', promoCodes: require('../config/brand').promoCodes });
+  }
+
   /* Build extra options note */
   const extras = [];
   if (returnTrip === 'yes')                 extras.push('Return trip: YES');

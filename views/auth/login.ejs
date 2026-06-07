@@ -1,6 +1,6 @@
 <% pageTitle = 'Sign In'; %>
-<%- include('../../partials/head') %>
-<%- include('../../partials/nav') %>
+<%- include('../partials/head') %>
+<%- include('../partials/nav') %>
 <main class="page-main">
   <div class="auth-card">
     <div class="auth-logo" aria-hidden="true">
@@ -18,6 +18,6 @@
     <p class="auth-switch">Don't have an account? <a href="/auth/register?next=<%= encodeURIComponent(next) %>">Create one</a></p>
   </div>
 </main>
-<%- include('../../partials/footer') %>
+<%- include('../partials/footer') %>
 <script src="/js/main.js"></script>
 </body></html>

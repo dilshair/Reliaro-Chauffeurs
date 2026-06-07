@@ -35,6 +35,9 @@ router.post('/register', async (req, res) => {
   if (!firstName || !lastName || !email || !password)
     return res.render('auth/register', { error: 'Please fill in all required fields.', next });
 
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(String(email).trim()))
+    return res.render('auth/register', { error: 'Please enter a valid email address.', next });
+
   if (password !== confirmPassword)
     return res.render('auth/register', { error: 'Passwords do not match.', next });
 

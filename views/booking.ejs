@@ -48,7 +48,7 @@
         <div class="form-group"><label for="lastName">Last Name *</label><input type="text" id="lastName" name="lastName" required value="<%= user ? user.name.split(' ').slice(1).join(' ') : '' %>"></div>
       </div>
       <div class="form-row">
-        <div class="form-group"><label for="email">Email *</label><input type="email" id="email" name="email" required value="<%= user ? user.email : '' %>"></div>
+        <div class="form-group"><label for="email">Email *</label><input type="email" id="email" name="email" required value="<%= user ? user.email : '' %>"><span class="field-error" id="email-error" hidden style="font-size:.78rem;color:#dc2626;margin-top:.25rem">Please enter a valid email address.</span></div>
         <div class="form-group">
           <label for="phone">Phone *</label>
           <input type="tel" id="phone" name="phone" required placeholder="+61 4XX XXX XXX">
@@ -292,6 +292,15 @@ function showPromoMsg(el, text, ok) {
 }
 
 document.getElementById('booking-form') && document.getElementById('booking-form').addEventListener('submit', function(e){
+  /* Email validation */
+  const email    = document.getElementById('email');
+  const emailErr = document.getElementById('email-error');
+  const emailRe  = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+  if (email && !emailRe.test(email.value.trim())) {
+    e.preventDefault(); if (emailErr) emailErr.hidden = false; email.focus(); return;
+  }
+  if (emailErr) emailErr.hidden = true;
+
   const phone = document.getElementById('phone');
   const err   = document.getElementById('phone-error');
   const re = /^(\+?61|0)[2-478]( ?\d){8}$/;

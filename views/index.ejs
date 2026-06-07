@@ -50,6 +50,24 @@
           Add a stop
         </button>
 
+        <!-- Child seats -->
+        <div class="calc-childseat">
+          <button type="button" class="calc-childseat-toggle" id="cs-toggle-ow" onclick="toggleChildSeats('ow')">
+            <span><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 6a3 3 0 116 0M5 11h14l-1 9H6z"/></svg> Add a child seat</span>
+            <svg class="cs-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="calc-childseat-panel" id="cs-panel-ow" hidden>
+            <% childSeatTypes.forEach(cs => { %>
+            <div class="cs-row">
+              <div><strong><%= cs.label %></strong><span>$<%= cs.fee %> each</span></div>
+              <select class="cs-qty" data-fee="<%= cs.fee %>" data-id="<%= cs.id %>" onchange="updateChildSeats('ow')">
+                <option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option>
+              </select>
+            </div>
+            <% }) %>
+          </div>
+        </div>
+
         <div class="calc-field-grid">
           <div class="calc-field-box">
             <label for="ow-date">Date</label>
@@ -96,6 +114,24 @@
           <div class="calc-field-box">
             <label for="hr-time">Pickup time</label>
             <input type="time" id="hr-time">
+          </div>
+        </div>
+
+        <!-- Child seats -->
+        <div class="calc-childseat" style="margin-bottom:1rem">
+          <button type="button" class="calc-childseat-toggle" id="cs-toggle-hr" onclick="toggleChildSeats('hr')">
+            <span><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 6a3 3 0 116 0M5 11h14l-1 9H6z"/></svg> Add a child seat</span>
+            <svg class="cs-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="calc-childseat-panel" id="cs-panel-hr" hidden>
+            <% childSeatTypes.forEach(cs => { %>
+            <div class="cs-row">
+              <div><strong><%= cs.label %></strong><span>$<%= cs.fee %> each</span></div>
+              <select class="cs-qty-hr" data-fee="<%= cs.fee %>" data-id="<%= cs.id %>" onchange="updateChildSeats('hr')">
+                <option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option>
+              </select>
+            </div>
+            <% }) %>
           </div>
         </div>
 

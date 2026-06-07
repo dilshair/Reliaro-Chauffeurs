@@ -49,6 +49,13 @@ module.exports = {
     { id: 'meet_greet', label: 'Meet & greet',     fee: 0,  perUnit: false },
   ],
 
+  /* ── Child seat types (all $15) ── */
+  childSeatTypes: [
+    { id: 'rear_facing',    label: 'Rear-facing baby seat',    fee: 15 },
+    { id: 'forward_facing', label: 'Forward-facing child seat', fee: 15 },
+    { id: 'booster',        label: 'Booster seat',             fee: 15 },
+  ],
+
   /* ── Promo codes ── */
   promoCodes: [
     { code: 'WELCOME10', type: 'percent', value: 10, desc: '10% off your first ride',  active: true,  minSpend: 0 },

@@ -41,6 +41,7 @@ app.use((req, res, next) => {
   res.locals.faqs          = brand.faqs;
   res.locals.addons        = brand.addons;
   res.locals.bookingRules  = brand.booking;
+  res.locals.childSeatTypes = brand.childSeatTypes;
   next();
 });
 

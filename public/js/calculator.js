@@ -54,7 +54,7 @@ window.addStop = function() {
   row.innerHTML =
     '<div class="calc-field-icon"><span class="dot-stop"></span></div>' +
     '<div class="calc-field-main">' +
-      '<label for="' + id + '">Stop ' + stopCount + '</label>' +
+      '<label for="' + id + '">Stop</label>' +
       '<input type="text" id="' + id + '" class="calc-ac calc-stop-input" placeholder="Address, airport, hotel or place" autocomplete="off">' +
     '</div>' +
     '<button type="button" class="calc-stop-remove" onclick="removeStop(' + stopCount + ')" aria-label="Remove stop">' +
@@ -62,18 +62,76 @@ window.addStop = function() {
     '</button>';
   container.appendChild(row);
   attachAutocomplete(document.getElementById(id));
-  if (stopCount >= MAX_STOPS) {
+  relabelStops();
+  if (countStops() >= MAX_STOPS) {
     const btn = document.getElementById('add-stop-btn');
     if (btn) btn.disabled = true;
   }
 };
 
+function countStops() { return document.querySelectorAll('.calc-stop-row').length; }
+
+function relabelStops() {
+  const rows = document.querySelectorAll('.calc-stop-row');
+  rows.forEach((row, i) => {
+    const label = row.querySelector('label');
+    if (label) label.textContent = rows.length > 1 ? 'Stop ' + (i + 1) : 'Stop';
+  });
+}
+
 window.removeStop = function(n) {
   const row = document.getElementById('stop-row-' + n);
   if (row) row.remove();
+  relabelStops();
   const btn = document.getElementById('add-stop-btn');
   if (btn) btn.disabled = false;
 };
+
+/* ── Child seats ── */
+window.toggleChildSeats = function(prefix) {
+  const panel = document.getElementById('cs-panel-' + prefix);
+  const toggle = document.getElementById('cs-toggle-' + prefix);
+  if (!panel) return;
+  const open = panel.hidden;
+  panel.hidden = !open;
+  if (toggle) toggle.classList.toggle('open', open);
+};
+
+window.updateChildSeats = function(prefix) {
+  /* Just updates the toggle label with count + fee */
+  const selector = prefix === 'hr' ? '.cs-qty-hr' : '.cs-qty';
+  let count = 0, fee = 0;
+  document.querySelectorAll(selector).forEach(s => {
+    const q = parseInt(s.value) || 0;
+    count += q;
+    fee += q * (parseFloat(s.dataset.fee) || 0);
+  });
+  const toggle = document.getElementById('cs-toggle-' + prefix);
+  if (toggle) {
+    const span = toggle.querySelector('span');
+    if (span) {
+      span.innerHTML = count > 0
+        ? '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6a3 3 0 116 0M5 11h14l-1 9H6z"/></svg> ' + count + ' child seat' + (count>1?'s':'') + ' (+$' + fee.toFixed(0) + ')'
+        : '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6a3 3 0 116 0M5 11h14l-1 9H6z"/></svg> Add a child seat';
+    }
+    toggle.classList.toggle('has-seats', count > 0);
+  }
+};
+
+/* ── Collect child seats for a tab ── */
+function collectChildSeats(prefix) {
+  const selector = prefix === 'hr' ? '.cs-qty-hr' : '.cs-qty';
+  const seats = [];
+  let totalFee = 0;
+  document.querySelectorAll(selector).forEach(s => {
+    const q = parseInt(s.value) || 0;
+    if (q > 0) {
+      seats.push({ id: s.dataset.id, qty: q, fee: parseFloat(s.dataset.fee) || 0 });
+      totalFee += q * (parseFloat(s.dataset.fee) || 0);
+    }
+  });
+  return { seats, totalFee };
+}
 
 /* ── Set min date ── */
 document.addEventListener('DOMContentLoaded', () => {
@@ -185,7 +243,7 @@ window.runCalculate = async function(mode) {
     const data = await res.json();
     if (!data.ok) return setError(errEl, data.message || 'Could not calculate. Please check the addresses.');
 
-    renderResults(data, { mode, pickup, dropoff, date, time, duration, stops });
+    renderResults(data, { mode, pickup, dropoff, date, time, duration, stops, childSeats: collectChildSeats(prefix) });
 
   } catch(e) {
     setError(errEl, e.message?.includes('fetch') ? 'Network error. Please check your connection.' : (e.message || 'Something went wrong. Please try again.'));
@@ -230,8 +288,11 @@ function renderResults(data, params) {
   if (!data.results?.length) {
     cardsEl.innerHTML = '<p style="text-align:center;color:var(--text-dmuted);padding:2rem">No vehicles available for this search. Please try different options.</p>';
   } else {
+    const csFee   = params.childSeats?.totalFee || 0;
+    const csCount = params.childSeats?.seats?.reduce((s, x) => s + x.qty, 0) || 0;
     cardsEl.innerHTML = data.results.map(r => {
       const p = r.pricing;
+      const grandTotal = p.total + csFee;
       const bookUrl = buildBookingUrl(r, data, params);
       return `
       <div class="vehicle-card ${r.popular ? 'featured' : ''}">
@@ -240,7 +301,7 @@ function renderResults(data, params) {
           <h3>${r.name}</h3>
           <p>${r.description}</p>
           <div class="vehicle-card-price">
-            <strong>$${p.total.toFixed(2)}</strong>
+            <strong>$${grandTotal.toFixed(2)}</strong>
             <span>Fixed price · incl. GST</span>
           </div>
         </div>
@@ -249,13 +310,14 @@ function renderResults(data, params) {
             <div class="price-row"><span>${isHourly ? `Hourly rate (${params.duration} hr)` : `Base fare (${data.route.km} km · ${fmtMins(data.route.mins)})`}</span><span>$${p.base.toFixed(2)}</span></div>
             ${p.tolls > 0 ? `<div class="price-row"><span>Tolls (est.)</span><span>$${p.tolls.toFixed(2)}</span></div>` : ''}
             ${p.surcharge > 0 ? `<div class="price-row"><span>Surcharge</span><span>$${p.surcharge.toFixed(2)}</span></div>` : ''}
+            ${csFee > 0 ? `<div class="price-row"><span>Child seats (${csCount})</span><span>$${csFee.toFixed(2)}</span></div>` : ''}
             <div class="price-row"><span>GST (10%)</span><span>$${p.gst.toFixed(2)}</span></div>
-            <div class="price-row total"><span>Total (fixed)</span><span>$${p.total.toFixed(2)}</span></div>
+            <div class="price-row total"><span>Total (fixed)</span><span>$${grandTotal.toFixed(2)}</span></div>
           </div>
           <ul class="vehicle-features">
             ${r.features.map(f => `<li>${f}</li>`).join('')}
           </ul>
-          <a href="${bookUrl}" class="vehicle-card-cta">Book ${r.name} — $${p.total.toFixed(2)}</a>
+          <a href="${bookUrl}" class="vehicle-card-cta">Book ${r.name} — $${grandTotal.toFixed(2)}</a>
         </div>
       </div>`;
     }).join('');
@@ -269,6 +331,8 @@ function renderResults(data, params) {
 /* ── Build booking URL ── */
 function buildBookingUrl(r, data, params) {
   const p = r.pricing;
+  const csFee = params.childSeats?.totalFee || 0;
+  const csList = (params.childSeats?.seats || []).map(s => `${s.id}:${s.qty}`).join(',');
   const q = new URLSearchParams({
     service:      r.name,
     vehicleClass: r.name,
@@ -284,8 +348,10 @@ function buildBookingUrl(r, data, params) {
     basePrice:    p.base.toFixed(2),
     tollCost:     p.tolls.toFixed(2),
     surchargeAmt: p.surcharge.toFixed(2),
+    childSeatFee: csFee.toFixed(2),
+    childSeats:   csList,
     gst:          p.gst.toFixed(2),
-    totalPrice:   p.total.toFixed(2),
+    totalPrice:   (p.total + csFee).toFixed(2),
   });
   return '/booking?' + q.toString();
 }

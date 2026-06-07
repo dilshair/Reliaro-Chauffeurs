@@ -1,0 +1,45 @@
+<% pageTitle = 'Booking ' + booking.reference; extraCss = '/css/dashboard.css'; %>
+<%- include('../../partials/head') %>
+<%- include('../../partials/nav') %>
+<main class="dash-main">
+  <div class="container" style="max-width:680px">
+    <a href="/account/bookings" class="back-link">← Back to Bookings</a>
+    <div class="dash-header">
+      <h1>Booking <%= booking.reference %></h1>
+      <span class="status-badge status-<%= booking.status %>" style="font-size:1rem;padding:.4rem 1rem"><%= booking.status %></span>
+    </div>
+    <div class="detail-card">
+      <div class="detail-section">
+        <h3>Journey Details</h3>
+        <div class="detail-row"><span>Vehicle</span><strong><%= booking.vehicle_class %></strong></div>
+        <div class="detail-row"><span>Pickup</span><strong><%= booking.pickup %></strong></div>
+        <div class="detail-row"><span>Drop-off</span><strong><%= booking.dropoff %></strong></div>
+        <div class="detail-row"><span>Date</span><strong><%= booking.date || '—' %> <%= booking.time || '' %></strong></div>
+        <div class="detail-row"><span>Passengers</span><strong><%= booking.passengers %></strong></div>
+        <% if (booking.notes) { %><div class="detail-row"><span>Notes</span><strong><%= booking.notes %></strong></div><% } %>
+      </div>
+      <div class="detail-section">
+        <h3>Pricing</h3>
+        <div class="detail-row"><span>Base fare</span><strong>$<%= Number(booking.base_price).toFixed(2) %></strong></div>
+        <% if (Number(booking.toll_cost) > 0) { %><div class="detail-row"><span>Tolls</span><strong>$<%= Number(booking.toll_cost).toFixed(2) %></strong></div><% } %>
+        <div class="detail-row"><span>GST</span><strong>$<%= Number(booking.gst).toFixed(2) %></strong></div>
+        <div class="detail-row detail-row-total"><span>Total (fixed)</span><strong>$<%= Number(booking.total_price).toFixed(2) %></strong></div>
+      </div>
+      <div class="detail-section">
+        <h3>Payment</h3>
+        <div class="detail-row"><span>Status</span><span class="status-badge status-<%= booking.payment_status %>"><%= booking.payment_status %></span></div>
+        <div class="detail-row"><span>Method</span><strong><%= booking.payment_method || '—' %></strong></div>
+      </div>
+      <% if (booking.admin_notes) { %>
+      <div class="detail-section">
+        <h3>Note from Reliaro</h3>
+        <p><%= booking.admin_notes %></p>
+      </div>
+      <% } %>
+    </div>
+    <p style="margin-top:1.5rem;color:#6b7280;font-size:.9rem">Questions about this booking? Call <a href="tel:+61400000000" style="color:#C9A84C">+61 400 000 000</a></p>
+  </div>
+</main>
+<%- include('../../partials/footer') %>
+<script src="/js/main.js"></script>
+</body></html>

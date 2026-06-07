@@ -1,0 +1,109 @@
+<% pageTitle = 'Booking ' + booking.reference; extraCss = '/css/dashboard.css'; bodyClass = 'admin-body'; %>
+<%- include('../../partials/head') %>
+<div class="admin-layout">
+  <aside class="admin-sidebar">
+    <div class="sidebar-brand"><svg width="22" height="22" viewBox="0 0 32 32" fill="none" aria-hidden="true"><circle cx="16" cy="16" r="15" stroke="#C9A84C" stroke-width="1.5"/><path d="M9 21 L16 10 L23 21" stroke="#C9A84C" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/><line x1="11" y1="21" x2="21" y2="21" stroke="#C9A84C" stroke-width="1.5" stroke-linecap="round"/></svg><span>Reliaro<em>Admin</em></span></div>
+    <nav class="sidebar-nav" aria-label="Admin navigation">
+      <a href="/admin" class="sidebar-link">Dashboard</a>
+      <a href="/admin/bookings" class="sidebar-link active">Bookings</a>
+      <a href="/admin/customers" class="sidebar-link">Customers</a>
+      <a href="/" class="sidebar-link" target="_blank">View Website</a>
+      <a href="/admin/logout" class="sidebar-link sidebar-link-logout">Sign Out</a>
+    </nav>
+  </aside>
+  <main class="admin-main">
+    <div class="admin-topbar">
+      <div><a href="/admin/bookings" class="back-link">← Bookings</a><h1 class="admin-page-title">Booking <%= booking.reference %></h1></div>
+      <span class="admin-user">👤 <%= admin.name %></span>
+    </div>
+
+    <% if (success) { %><div class="alert alert-success" role="alert"><%= success %></div><% } %>
+
+    <div class="admin-detail-grid">
+      <!-- Left: booking info -->
+      <div>
+        <div class="admin-card">
+          <div class="admin-card-header"><h2>Journey Details</h2><span class="status-badge status-<%= booking.status %>"><%= booking.status %></span></div>
+          <div class="detail-row"><span>Reference</span><strong><%= booking.reference %></strong></div>
+          <div class="detail-row"><span>Vehicle</span><strong><%= booking.vehicle_class %></strong></div>
+          <div class="detail-row"><span>Pickup</span><strong><%= booking.pickup %></strong></div>
+          <div class="detail-row"><span>Drop-off</span><strong><%= booking.dropoff %></strong></div>
+          <div class="detail-row"><span>Date & Time</span><strong><%= booking.date || '—' %> <%= booking.time || '' %></strong></div>
+          <div class="detail-row"><span>Passengers</span><strong><%= booking.passengers %></strong></div>
+          <div class="detail-row"><span>Luggage</span><strong><%= booking.luggage || '—' %></strong></div>
+          <% if (booking.distance_km) { %><div class="detail-row"><span>Distance</span><strong><%= booking.distance_km %> km · <%= booking.duration_mins %> min</strong></div><% } %>
+          <% if (booking.notes) { %><div class="detail-row"><span>Customer Notes</span><strong><%= booking.notes %></strong></div><% } %>
+        </div>
+
+        <div class="admin-card" style="margin-top:1rem">
+          <div class="admin-card-header"><h2>Customer</h2></div>
+          <div class="detail-row"><span>Name</span><strong><%= booking.guest_first_name %> <%= booking.guest_last_name %></strong></div>
+          <div class="detail-row"><span>Email</span><strong><a href="mailto:<%= booking.guest_email %>"><%= booking.guest_email %></a></strong></div>
+          <div class="detail-row"><span>Phone</span><strong><a href="tel:<%= booking.guest_phone %>"><%= booking.guest_phone %></a></strong></div>
+          <% if (user) { %><div class="detail-row"><span>Account</span><strong>Registered (ID: <%= user.id %>)</strong></div><% } %>
+        </div>
+
+        <div class="admin-card" style="margin-top:1rem">
+          <div class="admin-card-header"><h2>Pricing</h2></div>
+          <div class="detail-row"><span>Base fare</span><strong>$<%= Number(booking.base_price).toFixed(2) %></strong></div>
+          <% if (Number(booking.toll_cost) > 0) { %><div class="detail-row"><span>Tolls</span><strong>$<%= Number(booking.toll_cost).toFixed(2) %></strong></div><% } %>
+          <% if (Number(booking.surcharge_amt) > 0) { %><div class="detail-row"><span>Surcharge</span><strong>$<%= Number(booking.surcharge_amt).toFixed(2) %></strong></div><% } %>
+          <div class="detail-row"><span>GST (10%)</span><strong>$<%= Number(booking.gst).toFixed(2) %></strong></div>
+          <div class="detail-row detail-row-total"><span>Total</span><strong>$<%= Number(booking.total_price).toFixed(2) %></strong></div>
+        </div>
+      </div>
+
+      <!-- Right: actions -->
+      <div>
+        <div class="admin-card">
+          <div class="admin-card-header"><h2>Update Status</h2></div>
+          <form action="/admin/bookings/<%= booking.id %>/status" method="POST">
+            <div class="form-group">
+              <label for="status">Booking Status</label>
+              <select id="status" name="status">
+                <% ['pending','confirmed','in_progress','completed','cancelled'].forEach(s => { %>
+                <option value="<%= s %>" <%= booking.status === s ? 'selected' : '' %>><%= s %></option>
+                <% }) %>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="admin_notes">Note to Customer (optional)</label>
+              <textarea id="admin_notes" name="admin_notes" rows="3" placeholder="This will be included in the status update email…"><%= booking.admin_notes || '' %></textarea>
+            </div>
+            <button type="submit" class="btn btn-gold btn-full">Update Status & Notify Customer</button>
+          </form>
+        </div>
+
+        <div class="admin-card" style="margin-top:1rem">
+          <div class="admin-card-header"><h2>Payment Status</h2><span class="status-badge status-<%= booking.payment_status %>"><%= booking.payment_status %></span></div>
+          <form action="/admin/bookings/<%= booking.id %>/payment" method="POST" style="display:flex;gap:.75rem;align-items:center">
+            <select name="payment_status" style="flex:1">
+              <% ['pending','paid','refunded'].forEach(s => { %>
+              <option value="<%= s %>" <%= booking.payment_status === s ? 'selected' : '' %>><%= s %></option>
+              <% }) %>
+            </select>
+            <button type="submit" class="btn btn-outline-dark">Update</button>
+          </form>
+          <% if (booking.stripe_payment_intent) { %>
+          <p style="margin-top:.75rem;font-size:.8rem;color:#6b7280">Stripe ID: <code><%= booking.stripe_payment_intent %></code></p>
+          <% } %>
+        </div>
+
+        <div class="admin-card" style="margin-top:1rem">
+          <div class="admin-card-header"><h2>Quick Actions</h2></div>
+          <div style="display:flex;flex-direction:column;gap:.75rem">
+            <a href="mailto:<%= booking.guest_email %>?subject=Your Reliaro Booking <%= booking.reference %>" class="btn btn-outline-dark btn-full">Email Customer</a>
+            <a href="tel:<%= booking.guest_phone %>" class="btn btn-outline-dark btn-full">Call Customer</a>
+          </div>
+        </div>
+
+        <div class="admin-card" style="margin-top:1rem;font-size:.8rem;color:#6b7280">
+          <p>Created: <%= new Date(booking.created_at).toLocaleString('en-AU') %></p>
+          <p>Updated: <%= new Date(booking.updated_at).toLocaleString('en-AU') %></p>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+<script src="/js/main.js"></script>
+</body></html>

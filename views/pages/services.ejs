@@ -1,0 +1,81 @@
+<% pageTitle = 'Our Services'; %>
+<%- include('../partials/head') %>
+<%- include('../partials/nav') %>
+
+<div class="page-hero">
+  <div class="container-narrow">
+    <p class="eyebrow">What we offer</p>
+    <h1>Every journey, covered.</h1>
+    <p>From airport transfers to winery tours — professional chauffeur service across Melbourne, Victoria and beyond.</p>
+  </div>
+</div>
+
+<main class="section section-white">
+  <div class="container">
+    <div class="services-grid">
+      <% services.forEach(s => { %>
+      <article class="service-card" id="<%= s.id %>">
+        <div class="service-card-bg svc-<%= s.id %>" aria-hidden="true"></div>
+        <div class="service-card-overlay" aria-hidden="true"></div>
+        <div class="service-card-content">
+          <span class="service-card-label"><%= s.name %></span>
+          <h3 class="service-card-title"><%= s.shortDesc.split('.')[0] %>.</h3>
+          <p class="service-card-desc"><%= s.shortDesc %></p>
+          <a href="/#calculator" class="service-card-link">
+            Get a price
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+        </div>
+      </article>
+      <% }) %>
+    </div>
+  </div>
+</main>
+
+<!-- Service details -->
+<section class="section section-light">
+  <div class="container">
+    <% services.forEach((s, i) => { %>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center;margin-bottom:<%= i < services.length-1 ? '5rem' : '0' %>;direction:<%= i % 2 === 0 ? 'ltr' : 'rtl' %>">
+      <div style="direction:ltr">
+        <p class="eyebrow"><%= s.name %></p>
+        <h2 style="margin-bottom:1.25rem"><%= s.shortDesc.split('.')[0] %>.</h2>
+        <p style="color:var(--text-dmuted);margin-bottom:1.75rem;line-height:1.8"><%= s.fullDesc %></p>
+        <ul style="display:flex;flex-direction:column;gap:.6rem;margin-bottom:2rem">
+          <% s.features.forEach(f => { %>
+          <li style="display:flex;align-items:center;gap:.65rem;font-size:.9rem;color:var(--text-dmuted)">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#C9A84C" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+            <%= f %>
+          </li>
+          <% }) %>
+        </ul>
+        <a href="/#calculator" class="btn btn-dark">Get a price</a>
+      </div>
+      <div class="service-card" style="aspect-ratio:4/3;direction:ltr">
+        <div class="service-card-bg svc-<%= s.id %>" style="opacity:.9" aria-hidden="true"></div>
+        <div class="service-card-overlay" aria-hidden="true"></div>
+      </div>
+    </div>
+    <% }) %>
+  </div>
+</section>
+
+<section class="cta-band">
+  <div class="container">
+    <div class="cta-band-inner">
+      <div>
+        <h2>Ready to book?</h2>
+        <p>Get your fixed price in seconds with our calculator.</p>
+      </div>
+      <div class="cta-band-actions">
+        <a href="/#calculator" class="btn btn-gold btn-lg">Get a price</a>
+        <a href="/contact" class="btn btn-outline btn-lg">Contact us</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<%- include('../partials/whatsapp') %>
+<%- include('../partials/footer') %>
+<script src="/js/main.js"></script>
+</body></html>

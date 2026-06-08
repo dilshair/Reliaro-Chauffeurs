@@ -1,0 +1,36 @@
+<% pageTitle = 'Booking Received'; %>
+<%- include('partials/head') %>
+<%- include('partials/nav') %>
+<main class="page-main">
+  <div class="container" style="max-width:600px;text-align:center">
+    <div class="success-icon" aria-hidden="true">
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10" stroke="#C9A84C"/><polyline points="20 6 9 17 4 12" stroke="#C9A84C"/></svg>
+    </div>
+    <h1>Booking Received!</h1>
+    <p class="booking-ref">Reference: <strong><%= booking.reference %></strong></p>
+    <p>Thank you! We've received your booking and sent a confirmation email. We'll be in touch within 60 minutes to confirm all details.</p>
+
+    <div class="booking-detail-card">
+      <div class="bdc-row"><span>Vehicle</span><strong><%= booking.vehicle_class %></strong></div>
+      <div class="bdc-row"><span>Pickup</span><strong><%= booking.pickup %></strong></div>
+      <div class="bdc-row"><span>Drop-off</span><strong><%= booking.dropoff %></strong></div>
+      <% if (booking.date) { %><div class="bdc-row"><span>Date & Time</span><strong><%= booking.date %> <%= booking.time || '' %></strong></div><% } %>
+      <div class="bdc-row"><span>Price</span><strong style="color:#C9A84C">$<%= Number(booking.total_price).toFixed(2) %> (fixed)</strong></div>
+      <div class="bdc-row"><span>Status</span><strong class="status-badge status-<%= booking.status %>"><%= booking.status %></strong></div>
+    </div>
+
+    <div class="success-actions">
+      <% if (user) { %>
+      <a href="/account/bookings" class="btn btn-gold">View My Bookings</a>
+      <% } else { %>
+      <a href="/auth/register" class="btn btn-gold">Create Account to Track Booking</a>
+      <% } %>
+      <a href="/" class="btn btn-outline-dark">Back to Home</a>
+    </div>
+    <p style="margin-top:2rem;color:#6b7280;font-size:.9rem">Questions? Call us on <a href="tel:+61400000000" style="color:#C9A84C">+61 400 000 000</a></p>
+  </div>
+</main>
+<%- include('partials/whatsapp') %>
+<%- include('partials/footer') %>
+<script src="/js/main.js"></script>
+</body></html>

@@ -1,0 +1,66 @@
+<% pageTitle = 'About Us'; %>
+<%- include('../partials/head') %>
+<%- include('../partials/nav') %>
+
+<div class="page-hero">
+  <div class="container-narrow">
+    <p class="eyebrow">Our story</p>
+    <h1>Built on reliability.</h1>
+    <p>Reliaro Chauffeurs was founded with one goal — to deliver a chauffeur experience that Melbourne professionals and travellers can truly rely on.</p>
+  </div>
+</div>
+
+<section class="section section-white">
+  <div class="container">
+    <div class="about-content">
+      <div>
+        <p class="eyebrow">Who we are</p>
+        <h2 style="margin-bottom:1.5rem">Melbourne's premium chauffeur service.</h2>
+        <p style="color:var(--text-dmuted);margin-bottom:1.25rem;line-height:1.9">We believe every journey should be exceptional — not just the destination. Whether you're heading to the airport, attending a corporate event, or exploring Victoria's wine regions, Reliaro Chauffeurs delivers the same level of service every time.</p>
+        <p style="color:var(--text-dmuted);margin-bottom:2rem;line-height:1.9">Our chauffeurs are professionally trained, impeccably presented and deeply committed to making your journey as comfortable as possible. Every vehicle is late-model, meticulously maintained and prepared before each trip.</p>
+        <a href="/#calculator" class="btn btn-dark">Book a ride</a>
+      </div>
+      <div class="about-values">
+        <% [
+          {title:'Reliability', desc:'On time, every time. We track flights, monitor traffic and plan ahead so you never have to worry.'},
+          {title:'Professionalism', desc:'Uniformed chauffeurs, immaculate vehicles and discreet service that meets the highest standards.'},
+          {title:'Transparency', desc:'Fixed prices with no hidden fees. What you see is what you pay — including GST and tolls.'},
+          {title:'Comfort', desc:'Premium vehicles, complimentary water, Wi-Fi and chargers. Every detail considered.'},
+        ].forEach(v => { %>
+        <div class="value-card">
+          <h4><%= v.title %></h4>
+          <p><%= v.desc %></p>
+        </div>
+        <% }) %>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Stats -->
+<div class="stats-strip">
+  <div class="container-wide">
+    <div class="stats-grid">
+      <% stats.forEach(s => { %>
+      <div class="stat-block"><strong><%= s.value %></strong><p><%= s.label %></p></div>
+      <% }) %>
+    </div>
+  </div>
+</div>
+
+<section class="cta-band">
+  <div class="container">
+    <div class="cta-band-inner">
+      <div><h2>Experience the difference.</h2><p>Book your first ride today.</p></div>
+      <div class="cta-band-actions">
+        <a href="/#calculator" class="btn btn-gold btn-lg">Get a price</a>
+        <a href="/contact" class="btn btn-outline btn-lg">Get in touch</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<%- include('../partials/whatsapp') %>
+<%- include('../partials/footer') %>
+<script src="/js/main.js"></script>
+</body></html>
